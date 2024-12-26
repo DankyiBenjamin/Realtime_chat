@@ -140,9 +140,11 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+POSTGRES_LOCAL = True
 # override the default database with the database url
-DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
+
+if ENVIRONMENT == 'production' or POSTGRES_LOCAL:
+    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
