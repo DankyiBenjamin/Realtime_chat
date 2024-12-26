@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from asgiref.sync import async_to_sync
 # from .models import *
 import json
+from django.db import transaction
 
 
 class ChatroomConsumer(WebsocketConsumer):
@@ -68,7 +69,7 @@ class ChatroomConsumer(WebsocketConsumer):
         html = render_to_string(
             "a_rtchats/partials/chat_message_p.html", context=context)
         self.send(text_data=html)
-
+    @transaction.atomic
     def update_online_count(self):
         # get the online users count and subtract the current user
         online_count = self.chatroom.users_online.count() - 1
