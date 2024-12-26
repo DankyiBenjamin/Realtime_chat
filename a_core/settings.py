@@ -23,7 +23,8 @@ import psycopg2
 
 # Initialise environment variables
 env = Env()
-Env.read_env()
+if os.path.exists('.env'):
+    Env.read_env()
 
 ENVIRONMENT = env('ENVIRONMENT', default='production')
 
