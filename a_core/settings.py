@@ -51,7 +51,9 @@ INTERNAL_IPS = (
     'localhost:8000',
 )
 
-CSRF_TRUSTED_ORIGINS = ['https://*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://realtimechat-production-cd9e.up.railway.app',
+]
 
 
 # Application definition
