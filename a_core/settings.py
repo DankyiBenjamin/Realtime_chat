@@ -11,19 +11,21 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import environ
+from environ import Env
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 import dj_database_url
 from decouple import config
 import psycopg2
 
-load_dotenv()
+
 
 # Initialise environment variables
-env = environ.Env()
-environ.Env.read_env()
+env = Env()
+Env.read_env()
+
+ENVIRONMENT = env('ENVIRONMENT', default='production')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -114,20 +116,21 @@ TEMPLATES = [
 ASGI_APPLICATION = 'a_core.asgi.application'
 
 
-CHANNEL_LAYERS = {
-    'default': {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
-}
-
 # CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [(os.getenv('REDIS_URL'))],
-#         },
-#     },
+#     'default': {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     }
 # }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(env('REDIS_URL'))],
+            'group_expiry': 60,
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -137,15 +140,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# deployement database configuaration
-# if DEBUG == 'True':
 
-# else:
-#     DATABASES = {
-#         'default': dj_database_url.config(
-#             default=config('DATABASE_URL')
-#         )
-#     }
+# override the default database with the database url
+DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
